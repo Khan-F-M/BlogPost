@@ -1,2 +1,2 @@
-# PortfolioBlog
-This holds the code to my Portfolio/Blog
+# BlogPost
+This holds the code to my blog
