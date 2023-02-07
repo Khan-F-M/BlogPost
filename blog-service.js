@@ -1,8 +1,9 @@
 const Sequelize = require('sequelize');
 const Op = Sequelize.Op
+require('dotenv').config();
 
-var sequelize = new Sequelize('yhspltqx', 'yhspltqx', '20ULhenF9pVVHdHUaianROcBDBWNe0dz', {
-    host: 'manny.db.elephantsql.com',
+var sequelize = new Sequelize(process.env.DB_USER, process.env.DB_USER, process.env.DB_PASS, {
+    host: process.env.DB_HOST,
     dialect: 'postgres',
     port: 5432,
     dialectOptions: {
