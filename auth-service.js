@@ -22,6 +22,7 @@ module.exports.initialize = function () {
         let db = mongoose.createConnection(process.env.MONGODB_CONN_STRING);
         db.on('error', (err) => {
             reject(err); // reject the promise with the provided error
+            console.log(err);
         });
         db.once('open', () => {
             User = db.model("users", userSchema);
@@ -62,11 +63,13 @@ module.exports.checkUser = (userData) => {
     // properties: .userName, .userAgent, .email,
     // .password, .password2
     return new Promise((resolve, reject) => {
-        User.find({ userName: userData.userName }).then((users) => {
+        User.find({ userName: userData.userName })
+        .then((users) => {
             if (!users.length) {
                 reject(`Unable to find user: ${userData.userName}`);
             } else {
-                bcrypt.compare(userData.password, users[0].password).then((result) => {
+                bcrypt.compare(userData.password, users[0].password)
+                .then((result) => {
                     if (!result) {
                         reject(`Incorrect Password for user: ${userData.userName}`);
                     } else {
