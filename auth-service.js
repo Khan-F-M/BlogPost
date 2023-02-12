@@ -92,6 +92,8 @@ module.exports.checkUser = (userData) => {
             .catch((err) => {
                 reject(`Unable to find user: ${userData.userName}`);
             });
-    });
+    }).catch((err) => {
+        console.log(`This is the custom log error: ${err}`);
+    })
 }
 
