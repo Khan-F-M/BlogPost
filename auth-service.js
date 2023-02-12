@@ -31,32 +31,32 @@ module.exports.initialize = function () {
 };
 
 
-module.exports.registerUser = (userData) => {
-    // properties: .userName, .userAgent, .email,
-    // .password, .password2
-    return new Promise(function (resolve, reject) {
-        if (userData.password !== userData.password2) {
-            reject("Passwords do not match");
-        }
-        bcrypt.hash(userData.password, 10)
-            .then((hash) => {
-                userData.password = hash;
-                let newUser = new User(userData);
-                newUser.save().then(() => {
-                    resolve();
-                }).catch((error) => {
-                    if (error.code == 11000) {
-                        reject(`User Name already taken`);
-                    } else {
-                        reject(`There was an error creating the user: ${error}`)
-                    }
-                });
-            })
-            .catch((err) => {
-                reject(`There was an error encrypting the password: ${err}`);
-            });
-    });
-};
+// module.exports.registerUser = (userData) => {
+//     // properties: .userName, .userAgent, .email,
+//     // .password, .password2
+//     return new Promise(function (resolve, reject) {
+//         if (userData.password !== userData.password2) {
+//             reject("Passwords do not match");
+//         }
+//         bcrypt.hash(userData.password, 10)
+//             .then((hash) => {
+//                 userData.password = hash;
+//                 let newUser = new User(userData);
+//                 newUser.save().then(() => {
+//                     resolve();
+//                 }).catch((error) => {
+//                     if (error.code == 11000) {
+//                         reject(`User Name already taken`);
+//                     } else {
+//                         reject(`There was an error creating the user: ${error}`)
+//                     }
+//                 });
+//             })
+//             .catch((err) => {
+//                 reject(`There was an error encrypting the password: ${err}`);
+//             });
+//     });
+// };
 
 module.exports.checkUser = (userData) => {
     // properties: .userName, .userAgent, .email,
