@@ -87,7 +87,7 @@ function ensureLogin(req, res, next) {
 }
 
 app.get("/", (req, res) => {
-    res.redirect('/blog');
+    res.redirect('/about');
 });
 
 app.get("/about", (req, res) => {
