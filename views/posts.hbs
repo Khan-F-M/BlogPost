@@ -14,7 +14,7 @@
                 <tbody>
                     {{#each posts}}
                     <tr>
-                        <td>{{id}}</td>
+                        <td>{{this.id}}</td>
                         <td>{{title}}</td>
                         <td>{{#formatDate postDate}}{{/formatDate}}</td>
                         <td><a href="/posts?category={{category}}">{{category}}</a></td>

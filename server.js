@@ -57,7 +57,9 @@ app.use(function (req, res, next) {
     let route = req.path.substring(1);
     app.locals.activeRoute = "/" + (isNaN(route.split('/')[1]) ? route.replace(/\/(?!.*)/, "") : route.replace(/\/(.*)/, ""));
     app.locals.viewingCategory = req.query.category;
-    next();
+    console.log("req.query.category:", req.query.category);
+    console.log("app.locals.viewingCategory:", app.locals.viewingCategory);
+        next();
 });
 
 app.use(express.static('views'));
@@ -168,6 +170,7 @@ app.get('/blog/:id', async (req, res) => {
     try {
         // Obtain the post by "id"
         viewData.post = await blog.getPostById(req.params.id);
+        viewData.viewingCategory = req.query.category;
     } catch (err) {
         viewData.message = "no results";
     }
@@ -186,7 +189,7 @@ app.get('/blog/:id', async (req, res) => {
     res.render("blog", { data: viewData })
 });
 
-app.get("/categories", ensureLogin, function (req, res) {
+app.get("/categories",  function (req, res) {
     blog.getCategories().then((data) => {
         if (data.length > 0) {
             res.render("categories", { categories: data });
@@ -199,18 +202,18 @@ app.get("/categories", ensureLogin, function (req, res) {
     })
 });
 
-app.get("/categories/add", ensureLogin, (req, res) => {
+app.get("/categories/add",  (req, res) => {
     // res.sendFile(path.join(__dirname, "/views/addPost.html"));
     res.render("addCategory")
 });
 
-app.post("/categories/add", ensureLogin, (req, res) => {
+app.post("/categories/add",  (req, res) => {
     blog.addCategory(req.body).then(() => {
         res.redirect("/categories");
     })
 });
 
-app.get("/categories/delete/:id", ensureLogin, (req, res) => {
+app.get("/categories/delete/:id",  (req, res) => {
     blog.deleteCategoryById(req.params.id).then((data) => {
         res.redirect("/categories");
     }).catch((err) => {
@@ -218,7 +221,7 @@ app.get("/categories/delete/:id", ensureLogin, (req, res) => {
     })
 });
 
-app.get("/posts/add", ensureLogin, (req, res) => {
+app.get("/posts/add",  (req, res) => {
     blog.getCategories().then((data) => {
         res.render("addPost", { categories: data });
     }).catch((err) => {
@@ -226,7 +229,7 @@ app.get("/posts/add", ensureLogin, (req, res) => {
     })
 });
 
-app.get("/posts", ensureLogin, function (req, res) {
+app.get("/posts",  function (req, res) {
     if (req.query.category) {
         blog.getPostsByCategory(req.query.category).then((data) => {
             if (data.length > 0) {
@@ -273,7 +276,7 @@ app.get("/post/:value", (req, res) => {
     })
 })
 
-app.post('/posts/add', ensureLogin, upload.single("featureImage"), function (req, res) {
+app.post('/posts/add',  upload.single("featureImage"), function (req, res) {
     if (req.file) {
         let streamUpload = (req) => {
             return new Promise((resolve, reject) => {
@@ -313,7 +316,7 @@ app.post('/posts/add', ensureLogin, upload.single("featureImage"), function (req
     }
 })
 
-app.get("/posts/delete/:id", ensureLogin, (req, res) => {
+app.get("/posts/delete/:id", (req, res) => {
     blog.deletePostById(req.params.id).then((data) => {
         res.redirect("/posts");
     }).catch((err) => {
@@ -339,31 +342,31 @@ app.get("/login", (req, res) => {
 //         });
 // });
 
-app.post("/login", (req, res) => {
-    req.body.userAgent = req.get('User-Agent');
-    authData.checkUser(req.body)
-        .then(user => {
-            req.session.user = {
-                userName: user.userName,
-                email: user.email,
-                loginHistory: user.loginHistory
-            };
-            console.log("Redirecting to /posts");
-            res.redirect('/posts');
-        })
-        .catch(err => {
-            res.render("login", { errorMessage: err, userName: req.body.userName });
-        });
-});
+// app.post("/login", (req, res) => {
+//     req.body.userAgent = req.get('User-Agent');
+//     authData.checkUser(req.body)
+//         .then(user => {
+//             req.session.user = {
+//                 userName: user.userName,
+//                 email: user.email,
+//                 loginHistory: user.loginHistory
+//             };
+//             console.log("Redirecting to /posts");
+//             res.redirect('/posts');
+//         })
+//         .catch(err => {
+//             res.render("login", { errorMessage: err, userName: req.body.userName });
+//         });
+// });
 
-app.get("/logout", (req, res) => {
-    req.session.reset();
-    res.redirect('/');
-});
+// app.get("/logout", (req, res) => {
+//     req.session.reset();
+//     res.redirect('/');
+// });
 
-app.get("/userHistory", ensureLogin, (req, res) => {
-    res.render("userHistory");
-});
+// app.get("/userHistory",  (req, res) => {
+//     res.render("userHistory");
+// });
 
 
 app.use((req, res) => {
@@ -371,7 +374,6 @@ app.use((req, res) => {
 });
 
 blog.initialize()
-    .then(authData.initialize())
     .then(function () {
         app.listen(HTTP_PORT, function () {
             console.log("app listening on: " + HTTP_PORT)
